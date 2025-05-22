@@ -1,0 +1,44 @@
+
+type client: process
+type server: process
+type udp: channel
+
+channel ch_udp: udp
+
+syscall send(c, v) {
+  put [c::store(v)]
+}
+
+syscall recv(c) {
+  case 
+  | [c::store(v)] →   v 
+  end
+}
+
+allow client udp [send]
+allow server udp [recv]
+
+process Client(ch_net: udp) : client {
+
+    main {
+        var somedata = "datagram" in
+        _ :=send(ch_net, somedata) ;
+        event [::DataSend()]
+    }
+}
+
+process Server(ch_net: udp) : server {
+
+    main {
+        _ := recv(ch_net);
+        event [::DataRecv()]
+    }
+}
+
+system
+    Client(ch_udp)
+    | Server(ch_udp)
+requires [
+    lemma Reachable :
+    reachable ::DataSend(), ::DataRecv()
+]

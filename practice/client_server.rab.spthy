@@ -1,0 +1,70 @@
+theory rabbit
+
+begin
+builtins: natural-numbers
+
+
+// The signature of our model:
+
+
+
+
+
+
+// Initializing the gloval constants and access policy rules:
+
+
+
+
+// Global Constants:
+
+
+
+// Parametric global Constants:
+
+
+
+// Access control:
+
+
+rule Init_system[role="system"] : []--[Init_('rab_system')]->[State_Client(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_Server(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), !ACP_GEN_('rab_system_', 'rab_rab')] 
+
+rule Init_system_ACP_0[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_0')]->[!ACP_(<'rab_Server', 'rab_rab'>, 'rab_ch_udp', 'rab_recv')] 
+
+rule Init_system_ACP_1[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_1')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_udp', 'rab_send')] 
+
+// Model:  Client
+
+
+
+rule Client_merged___0___1_0_1_9[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_udp', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___1_0_1', param, %v_>, 'rab_', 'rab_', <'rab_datagram', 'rab_ch_udp', 'rab_datagram'>, 'rab_'), Store('rab_ch_udp', 'rab_datagram')] 
+
+rule Client_merged___1_0_1___4_7[role="Client"] : [State_Client(<'rab___1_0_1', param, %v_>, return_var_3, 'rab_', <l_0_3, l_1_3, l_2_3>, 'rab_')]--[Transition_(<'rab_Client', param>, 'rab___1_0_1', %v_), DataSend()]->[State_Client(<'rab___4', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+
+
+// Model:  Server
+
+
+
+rule Server_merged___0_0_0___2_9[role="Server"] : [State_Server(<'rab___0_0_0', param, %v_>, return_var_1, 'rab_', l_0_1, 'rab_'), Store(l_0_1, n_0_1), !ACP_(<'rab_Server', param>, l_0_1, 'rab_recv')]--[Transition_(<'rab_Server', param>, 'rab___0_0_0', %v_), DataRecv()]->[State_Server(<'rab___2', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+
+rule Server_scall_intro___0___0_0_0_0[role="Server"] : [State_Server(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_Server', param>, 'rab___0', %v_)]->[State_Server(<'rab___0_0_0', param, %v_>, 'rab_', 'rab_', 'rab_ch_udp', 'rab_')] 
+
+restriction Init_ : " All x #i #j . Init_(x) @ #i & Init_(x) @ #j ==> #i = #j "
+rule Equality_gen: [] --> [!Eq_(x,x)]
+rule NEquality_gen: [] --[NEq__(x,y)]-> [!NEq_(x,y)]
+restriction NEquality_rule: "All x #i. NEq__(x,x) @ #i ==> F"
+lemma AlwaysStarts_[reuse,use_induction]:
+
+      "All x p #i. Loop_Back(x, p) @i ==> Ex #j. Loop_Start(x, p) @j & j < i"
+lemma AlwaysStartsWhenEnds_[reuse,use_induction]:
+
+      "All x p #i. Loop_Finish(x, p) @i ==> Ex #j. Loop_Start(x, p) @j & j < i"
+lemma TransitionOnce_[reuse,use_induction]:
+
+      "All x p %i #j #k . Transition_(x, p, %i) @#j &
+        Transition_(x, p, %i) @ #k ==> #j = #k"
+
+lemma Reachable : exists-trace "Ex  #time_1  #time_0 . DataRecv()@#time_1 & DataSend()@#time_0 "
+end
+
