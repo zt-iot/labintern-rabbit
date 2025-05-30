@@ -1,6 +1,22 @@
+(* security primitives *)
+function pk:1
+function enc:2 
+function sign:2
+function dec:2
+function fst:1
+function snd:1
+equation fst ((x, y)) = x
+equation snd ((x, y)) = y
+function true:0
+function verify:3
+equation dec(enc(x, y), y) = x
+equation verify (sign(d, k), d, pk(k)) = true
 
+(*clientとserver*)
 type client: process
 type server: process
+
+(*channel*)
 type udp: channel
 
 channel ch_udp: udp
@@ -18,20 +34,96 @@ syscall recv(c) {
 allow client udp [send]
 allow server udp [recv]
 
+(*filesystem *)
+
+type client_files: filesys 
+type server_files: filesys
+
+syscall fopen (p) {
+  (* x はpに束縛されたvalue *)
+  case [p.x] ->
+    new y = Fd(x) in  (* xを格納したあどれすがy *)
+    put [p.x]; y (* caseで[p.x]がなくなってしまうので戻している，そしてyを返す *)
+  end
+}
+
+syscall fread (y){
+  let x = y.Fd in (*p．xのxが取り出せる*)
+  x
+}
+
+syscall fclose (y) {
+  (* これはfree *)
+  delete y.Fd 
+  }
+
+allow client client_files  [fopen, fread, fclose] 
+allow server server_files  [fopen, fread, fclose]  
+
+const fresh sym_k
+const fresh pub_k
+const fresh priv_k
+
 process Client(ch_net: udp) : client {
 
+  file "/data/privk": client_files = priv_k
+  file "/data/symk": client_files = sym_k
+
+  var privk_path = "/data/privk"
+  var symk_path = "/data/symk"
+
     main {
-        var somedata = "datagram" in
-        _ :=send(ch_net, somedata) ;
-        event [::DataSend()]
+        (* 変数宣言は var hoge= ** in*)
+        new somedata in
+
+        var privk_fd = fopen(privk_path) in
+        var priv_k = fread(privk_fd) in
+
+        var symk_fd = fopen(symk_path) in
+        var sym_k = fread(symk_fd) in
+
+        var encdata = enc(somedata, sym_k) in
+        var sig = sign(encdata, priv_k) in
+        _ :=send(ch_net, (sig, encdata));
+        event [::DataSend(somedata)]
     }
 }
 
 process Server(ch_net: udp) : server {
 
+  file "/data/pubk": server_files = pub_k
+  file "/data/symk": client_files = sym_k
+
+  var pubk_path = "/data/pubk"
+  var symk_path = "/data/symk"
+
+
     main {
-        _ := recv(ch_net);
-        event [::DataRecv()]
+
+        (* 鍵の読み込み *)
+        var pubk_fd = fopen(pubk_path) in
+        var pub_k = fread(pubk_fd) in
+        var symk_fd = fopen(symk_path) in
+        var sym_k = fread(symk_fd) in
+
+        (* 受信したデータを受け取る *)
+        var req = recv(ch_net) in
+        var sig = fst(req) in
+        var encdata = snd(req) in
+
+        (* データの検証 *)
+        var res = verify(sig, encdata, pub_k) in
+
+        (* 検証が成功した場合の処理 *)
+        case
+        | [res = true] → 
+            var decdata = dec(encdata, sym_k) in
+            event [::DataRecv(decdata)]
+        | [res != true] →
+            event [::InvalidSignature()]
+        end
+
+        (* データ受信完了のイベント *)
     }
 }
 
@@ -40,5 +132,7 @@ system
     | Server(ch_udp)
 requires [
     lemma Reachable :
-    reachable ::DataSend(), ::DataRecv()
+    reachable ::DataSend(x), ::DataRecv(x);
+    lemma x:
+    corresponds ::DataRecv(x) ~> ::DataSend(x)
 ]

@@ -8,8 +8,8 @@ builtins: natural-numbers
 
 
 
-
-
+functions: true/0, verify/3, snd/1, fst/1, dec/2, sign/2, enc/2, pk/1
+equations: verify(sign(loc_1, loc_0), loc_1, pk(loc_0))=true(), dec(enc(loc_1, loc_0), loc_0)=loc_1, snd(<loc_1, loc_0>)=loc_0, fst(<loc_1, loc_0>)=loc_1
 
 // Initializing the gloval constants and access policy rules:
 
@@ -19,6 +19,12 @@ builtins: natural-numbers
 // Global Constants:
 
 
+rule Const_sym_k : [Fr(sym_k)]--[Init_('rab_Const_sym_k'), Init_(<'rab_Const_sym_k', sym_k>)]->[!Const_('rab_sym_k', sym_k)] 
+
+rule Const_pub_k : [Fr(pub_k)]--[Init_('rab_Const_pub_k'), Init_(<'rab_Const_pub_k', pub_k>)]->[!Const_('rab_pub_k', pub_k)] 
+
+rule Const_priv_k : [Fr(priv_k)]--[Init_('rab_Const_priv_k'), Init_(<'rab_Const_priv_k', priv_k>)]->[!Const_('rab_priv_k', priv_k)] 
+
 
 // Parametric global Constants:
 
@@ -27,7 +33,7 @@ builtins: natural-numbers
 // Access control:
 
 
-rule Init_system[role="system"] : []--[Init_('rab_system')]->[State_Client(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_Server(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), !ACP_GEN_('rab_system_', 'rab_rab')] 
+rule Init_system[role="system"] : []--[Init_('rab_system')]->[State_Client(<'rab___0', 'rab_rab'>, 'rab_', 'rab_', 'rab_', 'rab_'), State_Server(<'rab___0', 'rab_rab'>, 'rab_', 'rab_', 'rab_', 'rab_'), !ACP_GEN_('rab_system_', 'rab_rab')] 
 
 rule Init_system_ACP_0[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_0')]->[!ACP_(<'rab_Server', 'rab_rab'>, 'rab_ch_udp', 'rab_recv')] 
 
@@ -37,34 +43,231 @@ rule Init_system_ACP_1[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[
 
 
 
-rule Client_merged___0___1_0_1_9[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_udp', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___1_0_1', param, %v_>, 'rab_', 'rab_', <'rab_datagram', 'rab_ch_udp', 'rab_datagram'>, 'rab_'), Store('rab_ch_udp', 'rab_datagram')] 
+rule Client_new_out___23___24_47[role="Client"] : [State_Client(<'rab___23', param>, return_var, meta_0, 'rab_', <top_0, top_1>)]-->[State_Client(<'rab___24', param>, return_var, 'rab_', 'rab_', <top_0, top_1>)] 
 
-rule Client_merged___1_0_1___4_7[role="Client"] : [State_Client(<'rab___1_0_1', param, %v_>, return_var_3, 'rab_', <l_0_3, l_1_3, l_2_3>, 'rab_')]--[Transition_(<'rab_Client', param>, 'rab___1_0_1', %v_), DataSend()]->[State_Client(<'rab___4', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+rule Client_let_out___22___23_46[role="Client"] : [State_Client(<'rab___22', param>, return_var, meta_0, loc_0, <top_0, top_1>)]-->[State_Client(<'rab___23', param>, return_var, meta_0, 'rab_', <top_0, top_1>)] 
+
+rule Client_let_out___21___22_45[role="Client"] : [State_Client(<'rab___21', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___22', param>, return_var, meta_0, loc_1, <top_0, top_1>)] 
+
+rule Client_let_out___20___21_44[role="Client"] : [State_Client(<'rab___20', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___21', param>, return_var, meta_0, <loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Client_let_out___19___20_43[role="Client"] : [State_Client(<'rab___19', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___20', param>, return_var, meta_0, <loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_let_out___18___19_42[role="Client"] : [State_Client(<'rab___18', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Client(<'rab___19', param>, return_var, meta_0, <loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Client_let_out___17___18_41[role="Client"] : [State_Client(<'rab___17', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Client(<'rab___18', param>, return_var, meta_0, <loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Client_event___16___17_40[role="Client"] : [State_Client(<'rab___16', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]--[DataSend(meta_0)]->[State_Client(<'rab___17', param>, 'rab_', meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Client_scall_out___15_0_1___16_39[role="Client"] : [State_Client(<'rab___15_0_1', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)]-->[State_Client(<'rab___16', param>, return_var, meta_0, <loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Client_put___15_0_0___15_0_1_38[role="Client"] : [State_Client(<'rab___15_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>), !ACP_(<'rab_Client', param>, loc_1, 'rab_send')]-->[State_Client(<'rab___15_0_1', param>, 'rab_', meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>), Store(loc_1, loc_0)] 
+
+rule Client_scall_intro___15___15_0_0_37[role="Client"] : [State_Client(<'rab___15', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Client(<'rab___15_0_0', param>, 'rab_', meta_0, <<loc_0, loc_1>, 'rab_ch_udp', loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Client_let_intro___14___15_36[role="Client"] : [State_Client(<'rab___14', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>), !Const_('rab_priv_k', priv_k)]-->[State_Client(<'rab___15', param>, 'rab_', meta_0, <sign(loc_0, priv_k), loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Client_let_intro___13___14_35[role="Client"] : [State_Client(<'rab___13', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), !Const_('rab_sym_k', sym_k)]-->[State_Client(<'rab___14', param>, 'rab_', meta_0, <enc(meta_0, sym_k), loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_scall_out___12_0_3___13_34[role="Client"] : [State_Client(<'rab___12_0_3', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Client(<'rab___13', param>, 'rab_', meta_0, <return_var, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Client_get_out___12_0_2___12_0_3_33[role="Client"] : [State_Client(<'rab___12_0_2', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Client(<'rab___12_0_3', param>, return_var, meta_1, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Client_return___12_0_1___12_0_2_32[role="Client"] : [State_Client(<'rab___12_0_1', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Client(<'rab___12_0_2', param>, meta_0, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Client_get_intro___12_0_0___12_0_1_31[role="Client"] : [State_Client(<'rab___12_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>), Fd_Client(param, loc_0, new_0)]-->[State_Client(<'rab___12_0_1', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>), Fd_Client(param, loc_0, new_0)] 
+
+rule Client_scall_intro___12___12_0_0_30[role="Client"] : [State_Client(<'rab___12', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___12_0_0', param>, 'rab_', meta_0, <loc_1, loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_let_intro___11___12_29[role="Client"] : [State_Client(<'rab___11', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___12', param>, 'rab_', meta_0, <'rab_', loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Client_scall_out___10_0_1___11_28[role="Client"] : [State_Client(<'rab___10_0_1', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___11', param>, 'rab_', meta_0, <return_var, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_case_out___10_0_0_0_4___10_0_1_27[role="Client"] : [State_Client(<'rab___10_0_0_0_4', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___10_0_1', param>, return_var, meta_1, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_new_out___10_0_0_0_3___10_0_0_0_4_26[role="Client"] : [State_Client(<'rab___10_0_0_0_3', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___10_0_0_0_4', param>, return_var, <meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_return___10_0_0_0_2___10_0_0_0_3_25[role="Client"] : [State_Client(<'rab___10_0_0_0_2', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Client(<'rab___10_0_0_0_3', param>, meta_0, <meta_0, meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_put___10_0_0_0_1___10_0_0_0_2_24[role="Client"] : [State_Client(<'rab___10_0_0_0_1', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), !ACP_(<'rab_Client', param>, loc_0, 'rab_fopen')]-->[State_Client(<'rab___10_0_0_0_2', param>, 'rab_', <meta_0, meta_1, meta_2>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), File_Client(param, loc_0, meta_1)] 
+
+rule Client_new_intro___10_0_0_0_0___10_0_0_0_1_23[role="Client"] : [State_Client(<'rab___10_0_0_0_0', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), Fr(new_0)]-->[State_Client(<'rab___10_0_0_0_1', param>, 'rab_', <new_0, meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), Fd_Client(param, new_0, meta_0)] 
+
+rule Client_guarded___10_0_0___10_0_0_0_0_22[role="Client"] : [State_Client(<'rab___10_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), File_Client(param, loc_0, new_0), !ACP_(<'rab_Client', param>, loc_0, 'rab_fopen')]-->[State_Client(<'rab___10_0_0_0_0', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Client_scall_intro___10___10_0_0_21[role="Client"] : [State_Client(<'rab___10', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___10_0_0', param>, 'rab_', meta_0, <top_0, loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Client_let_intro___9___10_20[role="Client"] : [State_Client(<'rab___9', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___10', param>, 'rab_', meta_0, <'rab_', loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_scall_out___8_0_3___9_19[role="Client"] : [State_Client(<'rab___8_0_3', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___9', param>, 'rab_', meta_0, <return_var, loc_2>, <top_0, top_1>)] 
+
+rule Client_get_out___8_0_2___8_0_3_18[role="Client"] : [State_Client(<'rab___8_0_2', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___8_0_3', param>, return_var, meta_1, <loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Client_return___8_0_1___8_0_2_17[role="Client"] : [State_Client(<'rab___8_0_1', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Client(<'rab___8_0_2', param>, meta_0, <meta_0, meta_1>, <loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Client_get_intro___8_0_0___8_0_1_16[role="Client"] : [State_Client(<'rab___8_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>), Fd_Client(param, loc_0, new_0)]-->[State_Client(<'rab___8_0_1', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1, loc_2>, <top_0, top_1>), Fd_Client(param, loc_0, new_0)] 
+
+rule Client_scall_intro___8___8_0_0_15[role="Client"] : [State_Client(<'rab___8', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___8_0_0', param>, 'rab_', meta_0, <loc_1, loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_let_intro___7___8_14[role="Client"] : [State_Client(<'rab___7', param>, return_var, meta_0, loc_0, <top_0, top_1>)]-->[State_Client(<'rab___8', param>, 'rab_', meta_0, <'rab_', loc_0>, <top_0, top_1>)] 
+
+rule Client_scall_out___6_0_1___7_13[role="Client"] : [State_Client(<'rab___6_0_1', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___7', param>, 'rab_', meta_0, return_var, <top_0, top_1>)] 
+
+rule Client_case_out___6_0_0_0_4___6_0_1_12[role="Client"] : [State_Client(<'rab___6_0_0_0_4', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___6_0_1', param>, return_var, meta_1, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_new_out___6_0_0_0_3___6_0_0_0_4_11[role="Client"] : [State_Client(<'rab___6_0_0_0_3', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___6_0_0_0_4', param>, return_var, <meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_return___6_0_0_0_2___6_0_0_0_3_10[role="Client"] : [State_Client(<'rab___6_0_0_0_2', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Client(<'rab___6_0_0_0_3', param>, meta_0, <meta_0, meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_put___6_0_0_0_1___6_0_0_0_2_9[role="Client"] : [State_Client(<'rab___6_0_0_0_1', param>, return_var, <meta_0, meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>), !ACP_(<'rab_Client', param>, loc_0, 'rab_fopen')]-->[State_Client(<'rab___6_0_0_0_2', param>, 'rab_', <meta_0, meta_1, meta_2>, <loc_0, loc_1>, <top_0, top_1>), File_Client(param, loc_0, meta_1)] 
+
+rule Client_new_intro___6_0_0_0_0___6_0_0_0_1_8[role="Client"] : [State_Client(<'rab___6_0_0_0_0', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>), Fr(new_0)]-->[State_Client(<'rab___6_0_0_0_1', param>, 'rab_', <new_0, meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>), Fd_Client(param, new_0, meta_0)] 
+
+rule Client_guarded___6_0_0___6_0_0_0_0_7[role="Client"] : [State_Client(<'rab___6_0_0', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>), File_Client(param, loc_0, new_0), !ACP_(<'rab_Client', param>, loc_0, 'rab_fopen')]-->[State_Client(<'rab___6_0_0_0_0', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Client_scall_intro___6___6_0_0_6[role="Client"] : [State_Client(<'rab___6', param>, return_var, meta_0, loc_0, <top_0, top_1>)]-->[State_Client(<'rab___6_0_0', param>, 'rab_', meta_0, <top_1, loc_0>, <top_0, top_1>)] 
+
+rule Client_let_intro___5___6_5[role="Client"] : [State_Client(<'rab___5', param>, return_var, meta_0, 'rab_', <top_0, top_1>)]-->[State_Client(<'rab___6', param>, 'rab_', meta_0, 'rab_', <top_0, top_1>)] 
+
+rule Client_new_intro___4___5_4[role="Client"] : [State_Client(<'rab___4', param>, return_var, 'rab_', 'rab_', <top_0, top_1>), Fr(new_0)]-->[State_Client(<'rab___5', param>, 'rab_', new_0, 'rab_', <top_0, top_1>)] 
+
+rule Client_init_mem___3___4_3[role="Client"] : [State_Client(<'rab___3', param>, return_var, 'rab_', 'rab_', top_0)]-->[State_Client(<'rab___4', param>, 'rab_', 'rab_', 'rab_', <'rab__data_symk', top_0>)] 
+
+rule Client_init_mem___2___3_2[role="Client"] : [State_Client(<'rab___2', param>, return_var, 'rab_', 'rab_', 'rab_')]-->[State_Client(<'rab___3', param>, 'rab_', 'rab_', 'rab_', 'rab__data_privk')] 
+
+rule Client_init_filesys___1___2_1[role="Client"] : [State_Client(<'rab___1', param>, return_var, 'rab_', 'rab_', 'rab_'), !Const_('rab_sym_k', sym_k)]-->[State_Client(<'rab___2', param>, 'rab_', 'rab_', 'rab_', 'rab_'), File_Client(param, 'rab__data_symk', sym_k), !ACP_(<'rab_Client', param>, 'rab__data_symk', 'rab_fclose'), !ACP_(<'rab_Client', param>, 'rab__data_symk', 'rab_fread'), !ACP_(<'rab_Client', param>, 'rab__data_symk', 'rab_fopen')] 
+
+rule Client_init_filesys___0___1_0[role="Client"] : [State_Client(<'rab___0', param>, return_var, 'rab_', 'rab_', 'rab_'), !Const_('rab_priv_k', priv_k)]-->[State_Client(<'rab___1', param>, 'rab_', 'rab_', 'rab_', 'rab_'), File_Client(param, 'rab__data_privk', priv_k), !ACP_(<'rab_Client', param>, 'rab__data_privk', 'rab_fclose'), !ACP_(<'rab_Client', param>, 'rab__data_privk', 'rab_fread'), !ACP_(<'rab_Client', param>, 'rab__data_privk', 'rab_fopen')] 
 
 
 // Model:  Server
 
 
 
-rule Server_merged___0_0_0___2_9[role="Server"] : [State_Server(<'rab___0_0_0', param, %v_>, return_var_1, 'rab_', l_0_1, 'rab_'), Store(l_0_1, n_0_1), !ACP_(<'rab_Server', param>, l_0_1, 'rab_recv')]--[Transition_(<'rab_Server', param>, 'rab___0_0_0', %v_), DataRecv()]->[State_Server(<'rab___2', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+rule Server_let_out___25___26_58[role="Server"] : [State_Server(<'rab___25', param>, return_var, 'rab_', loc_0, <top_0, top_1>)]-->[State_Server(<'rab___26', param>, return_var, 'rab_', 'rab_', <top_0, top_1>)] 
 
-rule Server_scall_intro___0___0_0_0_0[role="Server"] : [State_Server(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_Server', param>, 'rab___0', %v_)]->[State_Server(<'rab___0_0_0', param, %v_>, 'rab_', 'rab_', 'rab_ch_udp', 'rab_')] 
+rule Server_let_out___24___25_57[role="Server"] : [State_Server(<'rab___24', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___25', param>, return_var, 'rab_', loc_1, <top_0, top_1>)] 
+
+rule Server_let_out___23___24_56[role="Server"] : [State_Server(<'rab___23', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___24', param>, return_var, 'rab_', <loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Server_let_out___22___23_55[role="Server"] : [State_Server(<'rab___22', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___23', param>, return_var, 'rab_', <loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_let_out___21___22_54[role="Server"] : [State_Server(<'rab___21', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___22', param>, return_var, 'rab_', <loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_let_out___20___21_53[role="Server"] : [State_Server(<'rab___20', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Server(<'rab___21', param>, return_var, 'rab_', <loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_let_out___19___20_52[role="Server"] : [State_Server(<'rab___19', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6>, <top_0, top_1>)]-->[State_Server(<'rab___20', param>, return_var, 'rab_', <loc_1, loc_2, loc_3, loc_4, loc_5, loc_6>, <top_0, top_1>)] 
+
+rule Server_let_out___18___19_51[role="Server"] : [State_Server(<'rab___18', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)]-->[State_Server(<'rab___19', param>, return_var, 'rab_', <loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_case_out___17_1_1___18_50[role="Server"] : [State_Server(<'rab___17_1_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)]-->[State_Server(<'rab___18', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_event___17_1_0___17_1_1_49[role="Server"] : [State_Server(<'rab___17_1_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)]--[InvalidSignature()]->[State_Server(<'rab___17_1_1', param>, 'rab_', 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_guarded___17___17_1_0_48[role="Server"] : [State_Server(<'rab___17', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>), !NEq_(loc_0, true())]-->[State_Server(<'rab___17_1_0', param>, 'rab_', 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_case_out___17_0_3___18_47[role="Server"] : [State_Server(<'rab___17_0_3', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)]-->[State_Server(<'rab___18', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_let_out___17_0_2___17_0_3_46[role="Server"] : [State_Server(<'rab___17_0_2', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7, loc_8>, <top_0, top_1>)]-->[State_Server(<'rab___17_0_3', param>, return_var, 'rab_', <loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7, loc_8>, <top_0, top_1>)] 
+
+rule Server_event___17_0_1___17_0_2_45[role="Server"] : [State_Server(<'rab___17_0_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7, loc_8>, <top_0, top_1>)]--[DataRecv(loc_0)]->[State_Server(<'rab___17_0_2', param>, 'rab_', 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7, loc_8>, <top_0, top_1>)] 
+
+rule Server_let_intro___17_0_0___17_0_1_44[role="Server"] : [State_Server(<'rab___17_0_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>), !Const_('rab_sym_k', sym_k)]-->[State_Server(<'rab___17_0_1', param>, 'rab_', 'rab_', <dec(loc_1, sym_k), loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_guarded___17___17_0_0_43[role="Server"] : [State_Server(<'rab___17', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>), !Eq_(loc_0, true())]-->[State_Server(<'rab___17_0_0', param>, 'rab_', 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6, loc_7>, <top_0, top_1>)] 
+
+rule Server_let_intro___16___17_42[role="Server"] : [State_Server(<'rab___16', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6>, <top_0, top_1>), !Const_('rab_pub_k', pub_k)]-->[State_Server(<'rab___17', param>, 'rab_', 'rab_', <verify(loc_1, loc_0, pub_k), loc_0, loc_1, loc_2, loc_3, loc_4, loc_5, loc_6>, <top_0, top_1>)] 
+
+rule Server_let_intro___15___16_41[role="Server"] : [State_Server(<'rab___15', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Server(<'rab___16', param>, 'rab_', 'rab_', <snd(loc_1), loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_let_intro___14___15_40[role="Server"] : [State_Server(<'rab___14', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___15', param>, 'rab_', 'rab_', <fst(loc_0), loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_scall_out___13_0_1___14_39[role="Server"] : [State_Server(<'rab___13_0_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Server(<'rab___14', param>, 'rab_', 'rab_', <return_var, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_case_out___13_0_0_0_1___13_0_1_38[role="Server"] : [State_Server(<'rab___13_0_0_0_1', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Server(<'rab___13_0_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_return___13_0_0_0_0___13_0_0_0_1_37[role="Server"] : [State_Server(<'rab___13_0_0_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)]-->[State_Server(<'rab___13_0_0_0_1', param>, meta_0, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_guarded___13_0_0___13_0_0_0_0_36[role="Server"] : [State_Server(<'rab___13_0_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>), Store(loc_0, new_0), !ACP_(<'rab_Server', param>, loc_0, 'rab_recv')]-->[State_Server(<'rab___13_0_0_0_0', param>, 'rab_', new_0, <loc_0, loc_1, loc_2, loc_3, loc_4, loc_5>, <top_0, top_1>)] 
+
+rule Server_scall_intro___13___13_0_0_35[role="Server"] : [State_Server(<'rab___13', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___13_0_0', param>, 'rab_', 'rab_', <'rab_ch_udp', loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_let_intro___12___13_34[role="Server"] : [State_Server(<'rab___12', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___13', param>, 'rab_', 'rab_', <'rab_', loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_scall_out___11_0_3___12_33[role="Server"] : [State_Server(<'rab___11_0_3', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___12', param>, 'rab_', 'rab_', <return_var, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_get_out___11_0_2___11_0_3_32[role="Server"] : [State_Server(<'rab___11_0_2', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___11_0_3', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_return___11_0_1___11_0_2_31[role="Server"] : [State_Server(<'rab___11_0_1', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)]-->[State_Server(<'rab___11_0_2', param>, meta_0, meta_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>)] 
+
+rule Server_get_intro___11_0_0___11_0_1_30[role="Server"] : [State_Server(<'rab___11_0_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>), Fd_Server(param, loc_0, new_0)]-->[State_Server(<'rab___11_0_1', param>, 'rab_', new_0, <loc_0, loc_1, loc_2, loc_3, loc_4>, <top_0, top_1>), Fd_Server(param, loc_0, new_0)] 
+
+rule Server_scall_intro___11___11_0_0_29[role="Server"] : [State_Server(<'rab___11', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___11_0_0', param>, 'rab_', 'rab_', <loc_1, loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_let_intro___10___11_28[role="Server"] : [State_Server(<'rab___10', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___11', param>, 'rab_', 'rab_', <'rab_', loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Server_scall_out___9_0_1___10_27[role="Server"] : [State_Server(<'rab___9_0_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___10', param>, 'rab_', 'rab_', <return_var, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_case_out___9_0_0_0_4___9_0_1_26[role="Server"] : [State_Server(<'rab___9_0_0_0_4', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___9_0_1', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_new_out___9_0_0_0_3___9_0_0_0_4_25[role="Server"] : [State_Server(<'rab___9_0_0_0_3', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___9_0_0_0_4', param>, return_var, meta_1, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_return___9_0_0_0_2___9_0_0_0_3_24[role="Server"] : [State_Server(<'rab___9_0_0_0_2', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)]-->[State_Server(<'rab___9_0_0_0_3', param>, meta_0, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_put___9_0_0_0_1___9_0_0_0_2_23[role="Server"] : [State_Server(<'rab___9_0_0_0_1', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), !ACP_(<'rab_Server', param>, loc_0, 'rab_fopen')]-->[State_Server(<'rab___9_0_0_0_2', param>, 'rab_', <meta_0, meta_1>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), File_Server(param, loc_0, meta_1)] 
+
+rule Server_new_intro___9_0_0_0_0___9_0_0_0_1_22[role="Server"] : [State_Server(<'rab___9_0_0_0_0', param>, return_var, meta_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), Fr(new_0)]-->[State_Server(<'rab___9_0_0_0_1', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), Fd_Server(param, new_0, meta_0)] 
+
+rule Server_guarded___9_0_0___9_0_0_0_0_21[role="Server"] : [State_Server(<'rab___9_0_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>), File_Server(param, loc_0, new_0), !ACP_(<'rab_Server', param>, loc_0, 'rab_fopen')]-->[State_Server(<'rab___9_0_0_0_0', param>, 'rab_', new_0, <loc_0, loc_1, loc_2, loc_3>, <top_0, top_1>)] 
+
+rule Server_scall_intro___9___9_0_0_20[role="Server"] : [State_Server(<'rab___9', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___9_0_0', param>, 'rab_', 'rab_', <top_0, loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Server_let_intro___8___9_19[role="Server"] : [State_Server(<'rab___8', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___9', param>, 'rab_', 'rab_', <'rab_', loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_scall_out___7_0_3___8_18[role="Server"] : [State_Server(<'rab___7_0_3', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___8', param>, 'rab_', 'rab_', <return_var, loc_2>, <top_0, top_1>)] 
+
+rule Server_get_out___7_0_2___7_0_3_17[role="Server"] : [State_Server(<'rab___7_0_2', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___7_0_3', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Server_return___7_0_1___7_0_2_16[role="Server"] : [State_Server(<'rab___7_0_1', param>, return_var, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)]-->[State_Server(<'rab___7_0_2', param>, meta_0, meta_0, <loc_0, loc_1, loc_2>, <top_0, top_1>)] 
+
+rule Server_get_intro___7_0_0___7_0_1_15[role="Server"] : [State_Server(<'rab___7_0_0', param>, return_var, 'rab_', <loc_0, loc_1, loc_2>, <top_0, top_1>), Fd_Server(param, loc_0, new_0)]-->[State_Server(<'rab___7_0_1', param>, 'rab_', new_0, <loc_0, loc_1, loc_2>, <top_0, top_1>), Fd_Server(param, loc_0, new_0)] 
+
+rule Server_scall_intro___7___7_0_0_14[role="Server"] : [State_Server(<'rab___7', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___7_0_0', param>, 'rab_', 'rab_', <loc_1, loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_let_intro___6___7_13[role="Server"] : [State_Server(<'rab___6', param>, return_var, 'rab_', loc_0, <top_0, top_1>)]-->[State_Server(<'rab___7', param>, 'rab_', 'rab_', <'rab_', loc_0>, <top_0, top_1>)] 
+
+rule Server_scall_out___5_0_1___6_12[role="Server"] : [State_Server(<'rab___5_0_1', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___6', param>, 'rab_', 'rab_', return_var, <top_0, top_1>)] 
+
+rule Server_case_out___5_0_0_0_4___5_0_1_11[role="Server"] : [State_Server(<'rab___5_0_0_0_4', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___5_0_1', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_new_out___5_0_0_0_3___5_0_0_0_4_10[role="Server"] : [State_Server(<'rab___5_0_0_0_3', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___5_0_0_0_4', param>, return_var, meta_1, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_return___5_0_0_0_2___5_0_0_0_3_9[role="Server"] : [State_Server(<'rab___5_0_0_0_2', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>)]-->[State_Server(<'rab___5_0_0_0_3', param>, meta_0, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_put___5_0_0_0_1___5_0_0_0_2_8[role="Server"] : [State_Server(<'rab___5_0_0_0_1', param>, return_var, <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>), !ACP_(<'rab_Server', param>, loc_0, 'rab_fopen')]-->[State_Server(<'rab___5_0_0_0_2', param>, 'rab_', <meta_0, meta_1>, <loc_0, loc_1>, <top_0, top_1>), File_Server(param, loc_0, meta_1)] 
+
+rule Server_new_intro___5_0_0_0_0___5_0_0_0_1_7[role="Server"] : [State_Server(<'rab___5_0_0_0_0', param>, return_var, meta_0, <loc_0, loc_1>, <top_0, top_1>), Fr(new_0)]-->[State_Server(<'rab___5_0_0_0_1', param>, 'rab_', <new_0, meta_0>, <loc_0, loc_1>, <top_0, top_1>), Fd_Server(param, new_0, meta_0)] 
+
+rule Server_guarded___5_0_0___5_0_0_0_0_6[role="Server"] : [State_Server(<'rab___5_0_0', param>, return_var, 'rab_', <loc_0, loc_1>, <top_0, top_1>), File_Server(param, loc_0, new_0), !ACP_(<'rab_Server', param>, loc_0, 'rab_fopen')]-->[State_Server(<'rab___5_0_0_0_0', param>, 'rab_', new_0, <loc_0, loc_1>, <top_0, top_1>)] 
+
+rule Server_scall_intro___5___5_0_0_5[role="Server"] : [State_Server(<'rab___5', param>, return_var, 'rab_', loc_0, <top_0, top_1>)]-->[State_Server(<'rab___5_0_0', param>, 'rab_', 'rab_', <top_1, loc_0>, <top_0, top_1>)] 
+
+rule Server_let_intro___4___5_4[role="Server"] : [State_Server(<'rab___4', param>, return_var, 'rab_', 'rab_', <top_0, top_1>)]-->[State_Server(<'rab___5', param>, 'rab_', 'rab_', 'rab_', <top_0, top_1>)] 
+
+rule Server_init_mem___3___4_3[role="Server"] : [State_Server(<'rab___3', param>, return_var, 'rab_', 'rab_', top_0)]-->[State_Server(<'rab___4', param>, 'rab_', 'rab_', 'rab_', <'rab__data_symk', top_0>)] 
+
+rule Server_init_mem___2___3_2[role="Server"] : [State_Server(<'rab___2', param>, return_var, 'rab_', 'rab_', 'rab_')]-->[State_Server(<'rab___3', param>, 'rab_', 'rab_', 'rab_', 'rab__data_pubk')] 
+
+rule Server_init_filesys___1___2_1[role="Server"] : [State_Server(<'rab___1', param>, return_var, 'rab_', 'rab_', 'rab_'), !Const_('rab_sym_k', sym_k)]-->[State_Server(<'rab___2', param>, 'rab_', 'rab_', 'rab_', 'rab_'), File_Server(param, 'rab__data_symk', sym_k)] 
+
+rule Server_init_filesys___0___1_0[role="Server"] : [State_Server(<'rab___0', param>, return_var, 'rab_', 'rab_', 'rab_'), !Const_('rab_pub_k', pub_k)]-->[State_Server(<'rab___1', param>, 'rab_', 'rab_', 'rab_', 'rab_'), File_Server(param, 'rab__data_pubk', pub_k), !ACP_(<'rab_Server', param>, 'rab__data_pubk', 'rab_fclose'), !ACP_(<'rab_Server', param>, 'rab__data_pubk', 'rab_fread'), !ACP_(<'rab_Server', param>, 'rab__data_pubk', 'rab_fopen')] 
 
 restriction Init_ : " All x #i #j . Init_(x) @ #i & Init_(x) @ #j ==> #i = #j "
 rule Equality_gen: [] --> [!Eq_(x,x)]
 rule NEquality_gen: [] --[NEq__(x,y)]-> [!NEq_(x,y)]
 restriction NEquality_rule: "All x #i. NEq__(x,x) @ #i ==> F"
-lemma AlwaysStarts_[reuse,use_induction]:
 
-      "All x p #i. Loop_Back(x, p) @i ==> Ex #j. Loop_Start(x, p) @j & j < i"
-lemma AlwaysStartsWhenEnds_[reuse,use_induction]:
-
-      "All x p #i. Loop_Finish(x, p) @i ==> Ex #j. Loop_Start(x, p) @j & j < i"
-lemma TransitionOnce_[reuse,use_induction]:
-
-      "All x p %i #j #k . Transition_(x, p, %i) @#j &
-        Transition_(x, p, %i) @ #k ==> #j = #k"
-
-lemma Reachable : exists-trace "Ex  #time_1  #time_0 . DataRecv()@#time_1 & DataSend()@#time_0 "
+lemma x : all-traces "All new_0 #time_1 . DataRecv(new_0)@#time_1 ==> Ex  #time_2 . DataSend(new_0)@#time_2 & #time_2 < #time_1 "
+lemma Reachable : exists-trace "Ex new_0 #time_1  #time_0 . DataRecv(new_0)@#time_1 & DataSend(new_0)@#time_0 "
 end
 
