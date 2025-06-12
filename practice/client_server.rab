@@ -82,9 +82,9 @@ process Client(ch_net: udp) : client {
         var symk_fd = fopen(symk_path) in
         var sym_k = fread(symk_fd) in
 
-        var encdata = enc(somedata, sym_k) in
-        var sig = sign(encdata, priv_k) in
-        _ :=send(ch_net, (sig, encdata));
+        var cipher = enc(somedata, sym_k) in
+        var sig = sign(cipher, priv_k) in
+        _ :=send(ch_net, (sig, cipher));
         event [::DataSend(somedata)]
     }
 }
@@ -97,7 +97,6 @@ process Server(ch_net: udp) : server {
   var pubk_path = "/data/pubk"
   var symk_path = "/data/symk"
 
-
     main {
 
         (* 鍵の読み込み *)
@@ -109,16 +108,16 @@ process Server(ch_net: udp) : server {
         (* 受信したデータを受け取る *)
         var req = recv(ch_net) in
         var sig = fst(req) in
-        var encdata = snd(req) in
+        var cipher = snd(req) in
 
         (* データの検証 *)
-        var res = verify(sig, encdata, pub_k) in
+        var res = verify(sig, cipher, pub_k) in
 
         (* 検証が成功した場合の処理 *)
         case
         | [res = true] → 
-            var decdata = dec(encdata, sym_k) in
-            event [::DataRecv(decdata)]
+            var message = dec(cipher, sym_k) in
+            event [::DataRecv(message)]
         | [res != true] →
             event [::InvalidSignature()]
         end
