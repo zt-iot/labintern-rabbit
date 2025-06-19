@@ -8,7 +8,7 @@ builtins: natural-numbers
 
 
 
-functions: true/0, verify/3, snd/1, fst/1, dec/2, sign/2, enc/2, pk/1
+functions: true/0, hash/1, verify/3, snd/1, fst/1, dec/2, sign/2, enc/2, pk/1
 equations: verify(sign(loc_1, loc_0), loc_1, pk(loc_0))=true(), dec(enc(loc_1, loc_0), loc_0)=loc_1, snd(<loc_1, loc_0>)=loc_0, fst(<loc_1, loc_0>)=loc_1
 
 // Initializing the gloval constants and access policy rules:
@@ -75,13 +75,13 @@ rule Init_system_ACP_15[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--
 
 
 
-rule Client_merged___0___3_0_0_65[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___3_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', 'rab_example.com'>, 'rab_'), Store('rab_ch_client2cache', 'rab_example.com')] 
+rule Client_merged___0___3_0_0_61[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___3_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', 'rab_example.com'>, 'rab_'), Store('rab_ch_client2cache', 'rab_example.com')] 
 
-rule Client_merged___0___3_1_0_64[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___3_1_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', 'rab_example.com'>, 'rab_'), Store('rab_ch_client2cache', 'rab_example.com')] 
+rule Client_merged___0___3_1_0_60[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_)]->[State_Client(<'rab___3_1_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', 'rab_example.com'>, 'rab_'), Store('rab_ch_client2cache', 'rab_example.com')] 
 
-rule Client_merged___3_0_0___13_55[role="Client"] : [State_Client(<'rab___3_0_0', param, %v_>, return_var_6, 'rab_', <l_0_6, l_1_6, l_2_6>, 'rab_'), Store(l_0_6, n_0_6), !ACP_(<'rab_Client', param>, l_0_6, 'rab_recv'), !Const_('rab_cache_pubk', cache_pubk_17), !Const_('rab_tls_symk', tls_symk_19), !Eq_(verify(fst(n_0_6), snd(n_0_6), cache_pubk_17), true())]--[Transition_(<'rab_Client', param>, 'rab___3_0_0', %v_), ClientRecvResponse(fst(dec(snd(n_0_6), tls_symk_19)), snd(dec(snd(n_0_6), tls_symk_19)))]->[State_Client(<'rab___13', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+rule Client_merged___3_0_0___13_51[role="Client"] : [State_Client(<'rab___3_0_0', param, %v_>, return_var_6, 'rab_', <l_0_6, l_1_6, l_2_6>, 'rab_'), Store(l_0_6, n_0_6), !ACP_(<'rab_Client', param>, l_0_6, 'rab_recv'), !Const_('rab_tls_symk', tls_symk_15), !Eq_(snd(dec(n_0_6, tls_symk_15)), hash(fst(dec(n_0_6, tls_symk_15))))]--[Transition_(<'rab_Client', param>, 'rab___3_0_0', %v_), ClientRecvResponse(fst(fst(dec(n_0_6, tls_symk_15))), snd(fst(dec(n_0_6, tls_symk_15))))]->[State_Client(<'rab___13', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
 
-rule Client_merged___3_1_0___13_51[role="Client"] : [State_Client(<'rab___3_1_0', param, %v_>, return_var_11, 'rab_', <l_0_11, l_1_11, l_2_11>, 'rab_'), Store(l_0_11, n_0_11), In(n_1_11), !ACP_(<'rab_Client', param>, l_0_11, 'rab_recv'), !Const_('rab_cache_pubk', cache_pubk_17), !Const_('rab_tls_symk', tls_symk_19), !Eq_(verify(fst(n_1_11), snd(n_1_11), cache_pubk_17), true())]--[Transition_(<'rab_Client', param>, 'rab___3_1_0', %v_), ClientRecvResponse(fst(dec(snd(n_1_11), tls_symk_19)), snd(dec(snd(n_1_11), tls_symk_19)))]->[State_Client(<'rab___13', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+rule Client_merged___3_1_0___13_47[role="Client"] : [State_Client(<'rab___3_1_0', param, %v_>, return_var_11, 'rab_', <l_0_11, l_1_11, l_2_11>, 'rab_'), Store(l_0_11, n_0_11), In(n_1_11), !ACP_(<'rab_Client', param>, l_0_11, 'rab_recv'), !Const_('rab_tls_symk', tls_symk_15), !Eq_(snd(dec(n_1_11, tls_symk_15)), hash(fst(dec(n_1_11, tls_symk_15))))]--[Transition_(<'rab_Client', param>, 'rab___3_1_0', %v_), ClientRecvResponse(fst(fst(dec(n_1_11, tls_symk_15))), snd(fst(dec(n_1_11, tls_symk_15))))]->[State_Client(<'rab___13', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
 
 
 // Model:  DNScache
@@ -104,7 +104,7 @@ rule DNScache_merged___5_0_0___9_0_1_73[role="DNScache"] : [State_DNScache(<'rab
 
 rule DNScache_merged___5_1_0___9_0_1_69[role="DNScache"] : [State_DNScache(<'rab___5_1_0', param, %v_>, return_var_22, 'rab_', <l_0_22, l_1_22, l_2_22, l_3_22>, 'rab_'), Store(l_0_22, n_0_22), In(n_1_22), !ACP_(<'rab_DNScache', param>, l_0_22, 'rab_recv'), !Const_('rab_auth_pubk', auth_pubk_28), !Eq_(verify(snd(n_1_22), fst(n_1_22), auth_pubk_28), true())]--[Transition_(<'rab_DNScache', param>, 'rab___5_1_0', %v_), Cached(l_2_22, fst(n_1_22))]->[State_DNScache(<'rab___9_0_1', param, %v_>, 'rab_', 'rab_', <verify(snd(n_1_22), fst(n_1_22), auth_pubk_28), snd(n_1_22), fst(n_1_22), n_1_22, l_2_22, l_3_22>, 'rab_')] 
 
-rule DNScache_merged___9_0_1___16_61[role="DNScache"] : [State_DNScache(<'rab___9_0_1', param, %v_>, return_var_31, 'rab_', <l_0_31, l_1_31, l_2_31, l_3_31, l_4_31, l_5_31>, 'rab_'), !Const_('rab_cache_privk', cache_privk_33), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2client', 'rab_send'), !Const_('rab_tls_symk', tls_symk_32)]--[Transition_(<'rab_DNScache', param>, 'rab___9_0_1', %v_)]->[State_DNScache(<'rab___16', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), Store('rab_ch_cache2client', <sign(enc(<l_4_31, l_2_31>, tls_symk_32), cache_privk_33), enc(<l_4_31, l_2_31>, tls_symk_32)>)] 
+rule DNScache_merged___9_0_1___16_61[role="DNScache"] : [State_DNScache(<'rab___9_0_1', param, %v_>, return_var_31, 'rab_', <l_0_31, l_1_31, l_2_31, l_3_31, l_4_31, l_5_31>, 'rab_'), !Const_('rab_tls_symk', tls_symk_33), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2client', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___9_0_1', %v_)]->[State_DNScache(<'rab___16', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), Store('rab_ch_cache2client', enc(<<l_4_31, l_2_31>, hash(<l_4_31, l_2_31>)>, tls_symk_33))] 
 
 
 // Model:  DNSauth

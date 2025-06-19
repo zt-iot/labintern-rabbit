@@ -11,6 +11,7 @@ function true:0
 function verify:3
 equation dec(enc(x, y), y) = x
 equation verify (sign(d, k), d, pk(k)) = true
+function hash:1
 
 (*clientとserver*)
 type client: process
@@ -96,18 +97,15 @@ process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
       
       _ :=send(ch_cache_out, domain);
 
-      var response = recv(ch_cache_in) in
-      var sig = fst(response) in
-      var cipher = snd(response) in
+      var cipher = recv(ch_cache_in) in
+      (* 復号*)
+      var response = dec(cipher, tls_symk) in
 
-      (* 署名の検証 *)
-      var res = verify(sig, cipher, cache_pubk) in
+      var message = fst(response) in
+      var fingerprint = snd(response) in
+
       case
-      | [res = true] ->
-          (*暗号を復号*)
-          var message = dec(cipher, tls_symk) in
-
-          (* 受け取ったイベントを発生 *)
+      | [fingerprint = hash(message)] ->
           var address = snd(message) in
           var response_domain = fst(message) in
           event [::ClientRecvResponse(response_domain, address)]
@@ -141,9 +139,9 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
           event [::Cached(domain, address)];
 
           var message = (domain, address) in
-          var cipher = enc(message, tls_symk) in
-          var sig = sign(cipher, cache_privk) in
-          _ := send(ch_client_out, (sig, cipher))
+          var fingerprint = hash(message) in
+          var cipher = enc((message, fingerprint), tls_symk) in
+          _ := send(ch_client_out, cipher)
         end
 
     }
