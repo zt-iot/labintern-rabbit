@@ -21,8 +21,11 @@ type dnsauth: process
 type udp: channel
 type https: channel
 
-channel ch_cache: udp
-channel ch_auth: udp
+channel ch_cache2client: udp
+channel ch_client2cache: udp
+channel ch_cache2auth: udp
+channel ch_auth2cache: udp
+
 
 
 syscall send(c, v) {
@@ -71,21 +74,21 @@ attack tamper_channel on recv (c) {
   end
 }
 
-(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性うがある？ *)
+(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性がある *)
 allow attack client [tamper_channel]
 allow attack dnscache [tamper_channel]
 
 
 const fresh id
 
-process Client(ch_cache: udp) : client {
+process Client(ch_cache_in: udp, ch_cahce_out: udp) : client {
 
     main {
       var domain = "example.com" in
       
-      _ :=send(ch_cache, domain);
+      _ :=send(ch_cahce_out, domain);
 
-      var response = recv(ch_cache) in
+      var response = recv(ch_cache_in) in
       var address = snd(response) in
       var response_domain = fst(response) in
       event [::ClientRecvResponse(response_domain, address)]
@@ -93,19 +96,19 @@ process Client(ch_cache: udp) : client {
     }
 }
 
-process DNScache(ch_client: udp, ch_auth: udp) : dnscache {
+process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_auth_in: udp) : dnscache {
 
     main {
 
         (* クライアントからのクエリを受け取る *)
-        var query = recv(ch_client) in
+        var query = recv(ch_client_in) in
         var domain = query in
 
         (* 権威サーバーに問い合わせ *)
-        _ := send(ch_auth, (domain, id));
+        _ := send(ch_auth_out, (domain, id));
 
         (* 権威サーバーからの応答を受け取る *)
-        var response = recv(ch_auth) in
+        var response = recv(ch_auth_in) in
         var address = fst(response) in
         var response_id = snd(response) in
         event [::Cached(domain, address)];
@@ -113,13 +116,13 @@ process DNScache(ch_client: udp, ch_auth: udp) : dnscache {
         (* クライアントに応答を返す *)
         case 
         | [response_id = id] ->
-          _ := send(ch_client, (domain, address))
+          _ := send(ch_client_out, (domain, address))
         end
     }
 }
         
         
-process DNSauth (ch_cache: udp): dnsauth {
+process DNSauth (ch_cache_in: udp, ch_cache_out: udp): dnsauth {
   file "/data/record": dns_records = ("example.com", "192.0.2.1")
   var recordpath = "/data/record"
 
@@ -134,7 +137,7 @@ process DNSauth (ch_cache: udp): dnsauth {
         event [::Record(domain, address)];
 
         (* クエリを待機 *)
-        var req = recv(ch_cache) in
+        var req = recv(ch_cache_in) in
         var query = fst(req) in
         var id = snd(req) in
 
@@ -142,7 +145,7 @@ process DNSauth (ch_cache: udp): dnsauth {
         case 
         | [query = domain] -> 
             (* 一致する場合、応答を生成 *)
-            _ := send(ch_cache, (address, id))
+            _ := send(ch_cache_out, (address, id))
         end
     }
 }
@@ -150,25 +153,14 @@ process DNSauth (ch_cache: udp): dnsauth {
 
 
 system
-    Client(ch_cache)
-    | DNScache(ch_cache, ch_auth)
-    | DNSauth(ch_auth)
+    Client(ch_cache2client, ch_client2cache)
+    | DNScache(ch_client2cache, ch_cache2client, ch_cache2auth, ch_auth2cache)
+    | DNSauth(ch_cache2auth, ch_auth2cache)
 requires [
   lemma x:
-  reachable ::Cached(x, y), ::Record(x, y);
+  corresponds ::Cached(x, y) ~> ::Record(x, y);
   lemma y:
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
   corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y)
 ]
-
-(* 権威サーバーの初期化をイベントにする
-クエリ成功→初期化されたときのイベントの値が返ってきている
-
-3つのlemmmaを書く
-キャッシュサーバーが偽の権威サーバーに騙されていない
-corresponens
-
-キャッシュサーバーとクライアントが正しいこと
-
-権威サーバーとクライアントが正しいこと *)
