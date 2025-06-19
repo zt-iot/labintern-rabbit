@@ -79,30 +79,39 @@ allow attack client [tamper_channel]
 allow attack dnscache [tamper_channel]
 
 
-const fresh id
-
 const fresh auth_pubk
 const fresh auth_privk
 
 const fresh cache_pubk
 const fresh cache_privk
 
-const fresh a2c_symk
-const fresh c2c_symk
+const fresh tls_symk
 
 
 
-process Client(ch_cache_in: udp, ch_cahce_out: udp) : client {
+process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
 
     main {
       var domain = "example.com" in
       
-      _ :=send(ch_cahce_out, domain);
+      _ :=send(ch_cache_out, domain);
 
       var response = recv(ch_cache_in) in
-      var address = snd(response) in
-      var response_domain = fst(response) in
-      event [::ClientRecvResponse(response_domain, address)]
+      var sig = fst(response) in
+      var cipher = snd(response) in
+
+      (* 署名の検証 *)
+      var res = verify(sig, cipher, cache_pubk) in
+      case
+      | [res = true] ->
+          (*暗号を復号*)
+          var message = dec(cipher, tls_symk) in
+
+          (* 受け取ったイベントを発生 *)
+          var address = snd(message) in
+          var response_domain = fst(message) in
+          event [::ClientRecvResponse(response_domain, address)]
+      end
 
     }
 }
@@ -116,19 +125,27 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
         var domain = query in
 
         (* 権威サーバーに問い合わせ *)
-        _ := send(ch_auth_out, (domain, id));
+        _ := send(ch_auth_out, domain);
 
         (* 権威サーバーからの応答を受け取る *)
         var response = recv(ch_auth_in) in
         var address = fst(response) in
-        var response_id = snd(response) in
-        event [::Cached(domain, address)];
+        var sig_record = snd(response) in
 
-        (* クライアントに応答を返す *)
-        case 
-        | [response_id = id] ->
-          _ := send(ch_client_out, (domain, address))
+        (* DNSSECを検証 *)
+        var res = verify(sig_record, address, auth_pubk) in
+
+        case
+        | [res = true] ->
+          (* 検証が成功した場合、キャッシュに保存し、クライアントに返す *)
+          event [::Cached(domain, address)];
+
+          var message = (domain, address) in
+          var cipher = enc(message, tls_symk) in
+          var sig = sign(cipher, cache_privk) in
+          _ := send(ch_client_out, (sig, cipher))
         end
+
     }
 }
         
@@ -148,15 +165,14 @@ process DNSauth (ch_cache_in: udp, ch_cache_out: udp): dnsauth {
         event [::Record(domain, address)];
 
         (* クエリを待機 *)
-        var req = recv(ch_cache_in) in
-        var query = fst(req) in
-        var id = snd(req) in
+        var query = recv(ch_cache_in) in
 
         (* クエリが一致するか確認 *)
         case 
         | [query = domain] -> 
-            (* 一致する場合、応答を生成 *)
-            _ := send(ch_cache_out, (address, id))
+          (* DNSSECの署名を作成 *)
+            var sig = sign(address, auth_privk) in
+            _ := send(ch_cache_out, (address, sig))
         end
     }
 }
