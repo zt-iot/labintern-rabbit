@@ -52,50 +52,47 @@ allow eve udp [recv]
 type dns_records: filesys
 
 syscall fopen (p) {
-  (* x はpに束縛されたvalue *)
   case [p.x] ->
-    new y = Fd(x) in  (* xを格納したあどれすがy *)
-    put [p.x]; y (* caseで[p.x]がなくなってしまうので戻している，そしてyを返す *)
+    new y = Fd(x) in 
+    put [p.x]; y 
   end
 }
 
 syscall fread (y){
-  let x = y.Fd in (*p．xのxが取り出せる*)
+  let x = y.Fd in
   x
 }
 
 syscall fclose (y) {
-  (* これはfree *)
   delete y.Fd 
   }
 
 allow dnsauth dns_records  [fopen, fread, fclose] 
 
-(* attacker *)
+(* dnscacheやclientが受け取るパケッは改ざんされている可能性がある *)
 attack tamper_channel on recv (c) {
   case [c::store(j), ::In(w)] ->
     w
   end
 }
 
-(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性がある *)
 allow attack client [tamper_channel]
 allow attack dnscache [tamper_channel]
 
-
+(* 鍵の生成 *)
+(* DNSSEC用の権威サーバーの鍵 *)
 const fresh auth_pubk
 const fresh auth_privk
 
-const fresh cache_pubk
-const fresh cache_privk
-
+(*TLSのための共有鍵*)
 const fresh tls_symk
 
 
+(*クライアントの通信を覗き見する第三者*)
 process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
-
     main {
         var query = recv(ch_client_in) in
+        (* 覗き見したクエリ *)
         event [::EveGetQuery(query)]
     }
 }
@@ -103,26 +100,35 @@ process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
 process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
 
     main {
+      (*IPアドレスを知りたいドメイン*)
       var domain = "example.com" in
       
-      event [::ClientSendQuery(domain)];
+      (* ========== クエリの送信処理 ============================== *)
+      (* クエリのハッシュを計算 *)
       var query_fingerprint = hash(domain) in
+      (* クエリとハッシュを共通鍵で暗号化 *)
       var query_cipher = enc((domain, query_fingerprint), tls_symk) in
+      (* 暗号化したメッセージを送信する *)
+      event [::ClientSendQuery(domain)];
       _ :=send(ch_cache_out, query_cipher);
+      (* ========== クエリの送信完了 ============================== *)
+
+
+      (* ========== 受け取ったクエリの処理 ======================== *)
 
       var cipher = recv(ch_cache_in) in
-      (* 復号*)
       var response = dec(cipher, tls_symk) in
-
       var message = fst(response) in
       var fingerprint = snd(response) in
 
+      (*再計算したハッシュと，受け取ったハッシュを比べて改ざん検知*)
       case
       | [fingerprint = hash(message)] ->
-          var address = snd(message) in
-          var response_domain = fst(message) in
-          event [::ClientRecvResponse(response_domain, address)]
+          var res_domain = fst(message) in
+          var res_address = snd(message) in
+          event [::ClientRecvResponse(res_domain, res_address)]
       end
+      (* ========== 名前解決完了 ======================== *)
 
     }
 }
@@ -148,14 +154,15 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
         var address = fst(response) in
         var sig_record = snd(response) in
 
-        (* DNSSECを検証 *)
+        (* DNSSECでレコードを検証 *)
         var res = verify(sig_record, address, auth_pubk) in
 
+        (* 検証が成功した場合、キャッシュに保存し、クライアントに返す *)
         case
         | [res = true] ->
-          (* 検証が成功した場合、キャッシュに保存し、クライアントに返す *)
           event [::Cached(domain, address)];
 
+          (*クライアントとのTLS通信*)
           var message = (domain, address) in
           var fingerprint = hash(message) in
           var cipher = enc((message, fingerprint), tls_symk) in
