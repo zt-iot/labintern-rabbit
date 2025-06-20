@@ -207,6 +207,6 @@ requires [
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
   corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y);
-  lemma eve:
+  lemma w:
   reachable ::EveGetQuery(x), ::ClientSendQuery(x)
 ]

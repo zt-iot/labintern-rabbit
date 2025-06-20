@@ -147,7 +147,7 @@ lemma TransitionOnce_[reuse,use_induction]:
       "All x p %i #j #k . Transition_(x, p, %i) @#j &
         Transition_(x, p, %i) @ #k ==> #j = #k"
 
-lemma eve : exists-trace "Ex new_0 #time_1  #time_0 . ClientSendQuery(new_0)@#time_1 & EveGetQuery(new_0)@#time_0 "
+lemma w : exists-trace "Ex new_0 #time_1  #time_0 . ClientSendQuery(new_0)@#time_1 & EveGetQuery(new_0)@#time_0 "
 lemma z : all-traces "All new_0 new_1 #time_1 . ClientRecvResponse(new_1, new_0)@#time_1 ==> Ex  #time_2 . Record(new_1, new_0)@#time_2 & #time_2 < #time_1 "
 lemma y : all-traces "All new_0 new_1 #time_1 . ClientRecvResponse(new_1, new_0)@#time_1 ==> Ex  #time_2 . Cached(new_1, new_0)@#time_2 & #time_2 < #time_1 "
 lemma x : all-traces "All new_0 new_1 #time_1 . Cached(new_1, new_0)@#time_1 ==> Ex  #time_2 . Record(new_1, new_0)@#time_2 & #time_2 < #time_1 "
