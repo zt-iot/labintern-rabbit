@@ -17,6 +17,8 @@ type client: process
 type dnscache: process
 type dnsauth: process
 
+type eve: process
+
 (*channel*)
 type udp: channel
 type https: channel
@@ -42,6 +44,7 @@ allow client udp [send, recv]
 allow dnscache udp [send, recv]
 allow dnsauth udp [send, recv]
 
+allow eve udp [recv]
 
 (*filesystem *)
 
@@ -81,11 +84,20 @@ allow attack dnscache [tamper_channel]
 
 const fresh id
 
+process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
+
+    main {
+        var query = recv(ch_client_in) in
+        event [::EveGetQuery(query)]
+    }
+}
+
 process Client(ch_cache_in: udp, ch_cahce_out: udp) : client {
 
     main {
       var domain = "example.com" in
       
+        event [::ClientSendQuery(domain)];
       _ :=send(ch_cahce_out, domain);
 
       var response = recv(ch_cache_in) in
@@ -156,11 +168,14 @@ system
     Client(ch_cache2client, ch_client2cache)
     | DNScache(ch_client2cache, ch_cache2client, ch_cache2auth, ch_auth2cache)
     | DNSauth(ch_cache2auth, ch_auth2cache)
+    | Eve(ch_client2cache, ch_cache2client)
 requires [
   lemma x:
   corresponds ::Cached(x, y) ~> ::Record(x, y);
   lemma y:
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
-  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y)
+  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y);
+  lemma eve:
+  reachable ::EveGetQuery(x), ::ClientSendQuery(x)
 ]
