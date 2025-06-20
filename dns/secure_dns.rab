@@ -18,6 +18,8 @@ type client: process
 type dnscache: process
 type dnsauth: process
 
+type eve: process
+
 (*channel*)
 type udp: channel
 type https: channel
@@ -26,7 +28,6 @@ channel ch_cache2client: udp
 channel ch_client2cache: udp
 channel ch_cache2auth: udp
 channel ch_auth2cache: udp
-
 
 
 syscall send(c, v) {
@@ -42,6 +43,8 @@ syscall recv(c) {
 allow client udp [send, recv]
 allow dnscache udp [send, recv]
 allow dnsauth udp [send, recv]
+
+allow eve udp [recv]
 
 
 (*filesystem *)
@@ -89,13 +92,23 @@ const fresh cache_privk
 const fresh tls_symk
 
 
+process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
+
+    main {
+        var query = recv(ch_client_in) in
+        event [::EveGetQuery(query)]
+    }
+}
 
 process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
 
     main {
       var domain = "example.com" in
       
-      _ :=send(ch_cache_out, domain);
+      event [::ClientSendQuery(domain)];
+      var query_fingerprint = hash(domain) in
+      var query_cipher = enc((domain, query_fingerprint), tls_symk) in
+      _ :=send(ch_cache_out, query_cipher);
 
       var cipher = recv(ch_cache_in) in
       (* 復号*)
@@ -119,11 +132,16 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
     main {
 
         (* クライアントからのクエリを受け取る *)
-        var query = recv(ch_client_in) in
-        var domain = query in
-
-        (* 権威サーバーに問い合わせ *)
-        _ := send(ch_auth_out, domain);
+        var cipher_query = recv(ch_client_in) in
+        var query = dec(cipher_query, tls_symk) in
+        var query_fingerprint = snd(query) in
+        var domain = fst(query) in
+        
+        case 
+        | [query_fingerprint = hash(domain)] ->
+          (* 権威サーバーに問い合わせ *)
+          _ := send(ch_auth_out, domain)
+        end;
 
         (* 権威サーバーからの応答を受け取る *)
         var response = recv(ch_auth_in) in
@@ -181,11 +199,14 @@ system
     Client(ch_cache2client, ch_client2cache)
     | DNScache(ch_client2cache, ch_cache2client, ch_cache2auth, ch_auth2cache)
     | DNSauth(ch_cache2auth, ch_auth2cache)
+    | Eve(ch_client2cache, ch_cache2client)
 requires [
   lemma x:
   corresponds ::Cached(x, y) ~> ::Record(x, y);
   lemma y:
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
-  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y)
+  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y);
+  lemma eve:
+  reachable ::EveGetQuery(x), ::ClientSendQuery(x)
 ]
