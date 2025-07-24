@@ -76,7 +76,14 @@ attack tamper_channel on recv (c) {
   end
 }
 
-allow attack client [tamper_channel]
+attack eaves_channel on send (c, v) {
+  put [c::store(v), ::Out(v)]
+}
+
+
+(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性がある *)
+(* allow attack client [tamper_channel] *)
+allow attack dnscache [eaves_channel]
 allow attack dnscache [tamper_channel]
 
 (* 鍵の生成 *)
@@ -89,13 +96,7 @@ const fresh tls_symk
 
 
 (*クライアントの通信を覗き見する第三者*)
-process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
-    main {
-        var query = recv(ch_client_in) in
-        (* 覗き見したクエリ *)
-        event [::EveGetQuery(query)]
-    }
-}
+
 
 process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
 
@@ -206,14 +207,11 @@ system
     Client(ch_cache2client, ch_client2cache)
     | DNScache(ch_client2cache, ch_cache2client, ch_cache2auth, ch_auth2cache)
     | DNSauth(ch_cache2auth, ch_auth2cache)
-    | Eve(ch_client2cache, ch_cache2client)
 requires [
   lemma x:
   corresponds ::Cached(x, y) ~> ::Record(x, y);
   lemma y:
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
-  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y);
-  lemma w:
-  reachable ::EveGetQuery(x), ::ClientSendQuery(x)
+  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y)
 ]

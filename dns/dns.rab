@@ -17,8 +17,6 @@ type client: process
 type dnscache: process
 type dnsauth: process
 
-type eve: process
-
 (*channel*)
 type udp: channel
 type https: channel
@@ -43,8 +41,6 @@ syscall recv(c) {
 allow client udp [send, recv]
 allow dnscache udp [send, recv]
 allow dnsauth udp [send, recv]
-
-allow eve udp [recv]
 
 (*filesystem *)
 
@@ -77,20 +73,16 @@ attack tamper_channel on recv (c) {
   end
 }
 
-(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性がある *)
-allow attack client [tamper_channel]
-allow attack dnscache [tamper_channel]
-
-
-const fresh id
-
-process Eve(ch_client_in: udp, ch_client_out: udp) : eve {
-
-    main {
-        var query = recv(ch_client_in) in
-        event [::EveGetQuery(query)]
-    }
+attack eaves_channel on send (c, v) {
+  put [c::store(v), ::Out(v)]
 }
+
+
+(* dnscacheやclientが受け取るときに，値が書き換えられてる可能性がある *)
+(* allow attack client [tamper_channel] *)
+allow attack dnscache [tamper_channel]
+allow attack dnscache [eaves_channel]
+
 
 process Client(ch_cache_in: udp, ch_cahce_out: udp) : client {
 
@@ -111,6 +103,8 @@ process Client(ch_cache_in: udp, ch_cahce_out: udp) : client {
 process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_auth_in: udp) : dnscache {
 
     main {
+
+        new id in
 
         (* クライアントからのクエリを受け取る *)
         var query = recv(ch_client_in) in
@@ -168,14 +162,11 @@ system
     Client(ch_cache2client, ch_client2cache)
     | DNScache(ch_client2cache, ch_cache2client, ch_cache2auth, ch_auth2cache)
     | DNSauth(ch_cache2auth, ch_auth2cache)
-    | Eve(ch_client2cache, ch_cache2client)
 requires [
   lemma x:
   corresponds ::Cached(x, y) ~> ::Record(x, y);
   lemma y:
   corresponds ::ClientRecvResponse(x, y) ~> ::Cached(x, y);
   lemma z:
-  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y);
-  lemma eve:
-  reachable ::EveGetQuery(x), ::ClientSendQuery(x)
+  corresponds ::ClientRecvResponse(x, y) ~> ::Record(x, y)
 ]

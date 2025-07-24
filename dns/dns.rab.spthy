@@ -19,8 +19,6 @@ equations: verify(sign(loc_1, loc_0), loc_1, pk(loc_0))=true(), dec(enc(loc_1, l
 // Global Constants:
 
 
-rule Const_id : [Fr(id)]--[Init_('rab_Const_id'), Init_(<'rab_Const_id', id>)]->[!Const_('rab_id', id)] 
-
 
 // Parametric global Constants:
 
@@ -29,105 +27,93 @@ rule Const_id : [Fr(id)]--[Init_('rab_Const_id'), Init_(<'rab_Const_id', id>)]->
 // Access control:
 
 
-rule Init_system[role="system"] : []--[Init_('rab_system')]->[State_Client(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_DNScache(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_DNSauth(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_Eve(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), !ACP_GEN_('rab_system_', 'rab_rab')] 
+rule Init_system[role="system"] : []--[Init_('rab_system')]->[State_Client(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_DNScache(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), State_DNSauth(<'rab___0', 'rab_rab', %1>, 'rab_', 'rab_', 'rab_', 'rab_'), !ACP_GEN_('rab_system_', 'rab_rab')] 
 
-rule Init_system_ACP_0[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_0')]->[!ACP_(<'rab_Eve', 'rab_rab'>, 'rab_ch_client2cache', 'rab_recv')] 
+rule Init_system_ACP_0[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_0')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_recv')] 
 
-rule Init_system_ACP_1[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_1')]->[!ACP_(<'rab_Eve', 'rab_rab'>, 'rab_ch_cache2client', 'rab_recv')] 
+rule Init_system_ACP_1[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_1')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_send')] 
 
-rule Init_system_ACP_2[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_2')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_recv')] 
+rule Init_system_ACP_2[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_2')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_recv')] 
 
-rule Init_system_ACP_3[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_3')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_send')] 
+rule Init_system_ACP_3[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_3')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_send')] 
 
-rule Init_system_ACP_4[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_4')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_recv')] 
+rule Init_system_ACP_4[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_4')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_client2cache', 'rab_recv')] 
 
-rule Init_system_ACP_5[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_5')]->[!ACP_(<'rab_DNSauth', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_send')] 
+rule Init_system_ACP_5[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_5')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_client2cache', 'rab_send')] 
 
-rule Init_system_ACP_6[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_6')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_client2cache', 'rab_recv')] 
+rule Init_system_ACP_6[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_6')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2client', 'rab_recv')] 
 
-rule Init_system_ACP_7[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_7')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_client2cache', 'rab_send')] 
+rule Init_system_ACP_7[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_7')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2client', 'rab_send')] 
 
-rule Init_system_ACP_8[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_8')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2client', 'rab_recv')] 
+rule Init_system_ACP_8[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_8')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_recv')] 
 
-rule Init_system_ACP_9[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_9')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2client', 'rab_send')] 
+rule Init_system_ACP_9[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_9')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_send')] 
 
-rule Init_system_ACP_10[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_10')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_recv')] 
+rule Init_system_ACP_10[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_10')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_recv')] 
 
-rule Init_system_ACP_11[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_11')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_cache2auth', 'rab_send')] 
+rule Init_system_ACP_11[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_11')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_send')] 
 
-rule Init_system_ACP_12[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_12')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_recv')] 
+rule Init_system_ACP_12[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_12')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_cache2client', 'rab_recv')] 
 
-rule Init_system_ACP_13[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_13')]->[!ACP_(<'rab_DNScache', 'rab_rab'>, 'rab_ch_auth2cache', 'rab_send')] 
+rule Init_system_ACP_13[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_13')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_cache2client', 'rab_send')] 
 
-rule Init_system_ACP_14[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_14')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_cache2client', 'rab_recv')] 
+rule Init_system_ACP_14[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_14')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_client2cache', 'rab_recv')] 
 
-rule Init_system_ACP_15[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_15')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_cache2client', 'rab_send')] 
-
-rule Init_system_ACP_16[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_16')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_client2cache', 'rab_recv')] 
-
-rule Init_system_ACP_17[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_17')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_client2cache', 'rab_send')] 
+rule Init_system_ACP_15[role="system"] : [!ACP_GEN_('rab_system_', 'rab_rab')]--[Init_('rab_system_ACP_15')]->[!ACP_(<'rab_Client', 'rab_rab'>, 'rab_ch_client2cache', 'rab_send')] 
 
 // Model:  Client
 
 
 
-rule Client_merged___0___2_45[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_), ClientSendQuery('rab_example.com')]->[State_Client(<'rab___2', param, %v_>, 'rab_', 'rab_', 'rab_example.com', 'rab_')] 
+rule Client_merged___0___2_32[role="Client"] : [State_Client(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_Client', param>, 'rab___0', %v_), ClientSendQuery('rab_example.com')]->[State_Client(<'rab___2', param, %v_>, 'rab_', 'rab_', 'rab_example.com', 'rab_')] 
 
-rule Client_merged___2___4_1_0_44[role="Client"] : [State_Client(<'rab___2', param, %v_>, return_var_2, 'rab_', l_0_2, 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___2', %v_)]->[State_Client(<'rab___4_1_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', l_0_2>, 'rab_'), Store('rab_ch_client2cache', l_0_2)] 
+rule Client_merged___2___4_0_0_31[role="Client"] : [State_Client(<'rab___2', param, %v_>, return_var_2, 'rab_', l_0_2, 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___2', %v_)]->[State_Client(<'rab___4_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', l_0_2>, 'rab_'), Store('rab_ch_client2cache', l_0_2)] 
 
-rule Client_merged___2___4_0_0_43[role="Client"] : [State_Client(<'rab___2', param, %v_>, return_var_2, 'rab_', l_0_2, 'rab_'), !ACP_(<'rab_Client', param>, 'rab_ch_client2cache', 'rab_send')]--[Transition_(<'rab_Client', param>, 'rab___2', %v_)]->[State_Client(<'rab___4_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2client', 'rab_', l_0_2>, 'rab_'), Store('rab_ch_client2cache', l_0_2)] 
-
-rule Client_merged___4_0_0___12_36[role="Client"] : [State_Client(<'rab___4_0_0', param, %v_>, return_var_7, 'rab_', <l_0_7, l_1_7, l_2_7>, 'rab_'), Store(l_0_7, n_0_7), !ACP_(<'rab_Client', param>, l_0_7, 'rab_recv')]--[Transition_(<'rab_Client', param>, 'rab___4_0_0', %v_), ClientRecvResponse(fst(n_0_7), snd(n_0_7))]->[State_Client(<'rab___12', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
-
-rule Client_merged___4_1_0___12_32[role="Client"] : [State_Client(<'rab___4_1_0', param, %v_>, return_var_12, 'rab_', <l_0_12, l_1_12, l_2_12>, 'rab_'), Store(l_0_12, n_0_12), In(n_1_12), !ACP_(<'rab_Client', param>, l_0_12, 'rab_recv')]--[Transition_(<'rab_Client', param>, 'rab___4_1_0', %v_), ClientRecvResponse(fst(n_1_12), snd(n_1_12))]->[State_Client(<'rab___12', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
+rule Client_merged___4_0_0___12_27[role="Client"] : [State_Client(<'rab___4_0_0', param, %v_>, return_var_7, 'rab_', <l_0_7, l_1_7, l_2_7>, 'rab_'), !ACP_(<'rab_Client', param>, l_0_7, 'rab_recv'), Store(l_0_7, n_0_7)]--[Transition_(<'rab_Client', param>, 'rab___4_0_0', %v_), ClientRecvResponse(fst(n_0_7), snd(n_0_7))]->[State_Client(<'rab___12', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
 
 
 // Model:  DNScache
 
 
 
-rule DNScache_merged___0___1_0_0_75[role="DNScache"] : [State_DNScache(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_DNScache', param>, 'rab___0', %v_)]->[State_DNScache(<'rab___1_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_client2cache', 'rab_'>, 'rab_')] 
+rule DNScache_merged___0___2_0_0_88[role="DNScache"] : [State_DNScache(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), Fr(n_0_0)]--[Transition_(<'rab_DNScache', param>, 'rab___0', %v_)]->[State_DNScache(<'rab___2_0_0', param, %v_>, 'rab_', n_0_0, <'rab_ch_client2cache', 'rab_'>, 'rab_')] 
 
-rule DNScache_merged___0___1_1_0_74[role="DNScache"] : [State_DNScache(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_DNScache', param>, 'rab___0', %v_)]->[State_DNScache(<'rab___1_1_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_client2cache', 'rab_'>, 'rab_')] 
+rule DNScache_merged___0___2_1_0_87[role="DNScache"] : [State_DNScache(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_'), Fr(n_0_0)]--[Transition_(<'rab_DNScache', param>, 'rab___0', %v_)]->[State_DNScache(<'rab___2_1_0', param, %v_>, 'rab_', n_0_0, <'rab_ch_client2cache', 'rab_'>, 'rab_')] 
 
-rule DNScache_merged___1_0_0___2_73[role="DNScache"] : [State_DNScache(<'rab___1_0_0', param, %v_>, return_var_2, 'rab_', <l_0_2, l_1_2>, 'rab_'), Store(l_0_2, n_0_2), !ACP_(<'rab_DNScache', param>, l_0_2, 'rab_recv')]--[Transition_(<'rab_DNScache', param>, 'rab___1_0_0', %v_)]->[State_DNScache(<'rab___2', param, %v_>, 'rab_', 'rab_', n_0_2, 'rab_')] 
+rule DNScache_merged___2_1_0___3_84[role="DNScache"] : [State_DNScache(<'rab___2_1_0', param, %v_>, return_var_3, m_0_3, <l_0_3, l_1_3>, 'rab_'), !ACP_(<'rab_DNScache', param>, l_0_3, 'rab_recv'), In(n_1_3), Store(l_0_3, n_0_3)]--[Transition_(<'rab_DNScache', param>, 'rab___2_1_0', %v_)]->[State_DNScache(<'rab___3', param, %v_>, 'rab_', m_0_3, n_1_3, 'rab_')] 
 
-rule DNScache_merged___1_1_0___2_70[role="DNScache"] : [State_DNScache(<'rab___1_1_0', param, %v_>, return_var_7, 'rab_', <l_0_7, l_1_7>, 'rab_'), Store(l_0_7, n_0_7), In(n_1_7), !ACP_(<'rab_DNScache', param>, l_0_7, 'rab_recv')]--[Transition_(<'rab_DNScache', param>, 'rab___1_1_0', %v_)]->[State_DNScache(<'rab___2', param, %v_>, 'rab_', 'rab_', n_1_7, 'rab_')] 
+rule DNScache_merged___2_0_0___3_81[role="DNScache"] : [State_DNScache(<'rab___2_0_0', param, %v_>, return_var_8, m_0_8, <l_0_8, l_1_8>, 'rab_'), !ACP_(<'rab_DNScache', param>, l_0_8, 'rab_recv'), Store(l_0_8, n_0_8)]--[Transition_(<'rab_DNScache', param>, 'rab___2_0_0', %v_)]->[State_DNScache(<'rab___3', param, %v_>, 'rab_', m_0_8, n_0_8, 'rab_')] 
 
-rule DNScache_merged___2___5_0_0_67[role="DNScache"] : [State_DNScache(<'rab___2', param, %v_>, return_var_11, 'rab_', l_0_11, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2auth', 'rab_send'), !Const_('rab_id', id_12)]--[Transition_(<'rab_DNScache', param>, 'rab___2', %v_)]->[State_DNScache(<'rab___5_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_auth2cache', 'rab_', l_0_11, l_0_11>, 'rab_'), Store('rab_ch_cache2auth', <l_0_11, id_12>)] 
+rule DNScache_merged___3___5_78[role="DNScache"] : [State_DNScache(<'rab___3', param, %v_>, return_var_12, m_0_12, l_0_12, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2auth', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___3', %v_)]->[State_DNScache(<'rab___5', param, %v_>, 'rab_', m_0_12, <l_0_12, l_0_12>, 'rab_'), Store('rab_ch_cache2auth', <l_0_12, m_0_12>)] 
 
-rule DNScache_merged___2___5_1_0_66[role="DNScache"] : [State_DNScache(<'rab___2', param, %v_>, return_var_11, 'rab_', l_0_11, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2auth', 'rab_send'), !Const_('rab_id', id_12)]--[Transition_(<'rab_DNScache', param>, 'rab___2', %v_)]->[State_DNScache(<'rab___5_1_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_auth2cache', 'rab_', l_0_11, l_0_11>, 'rab_'), Store('rab_ch_cache2auth', <l_0_11, id_12>)] 
+rule DNScache_merged___3___5_77[role="DNScache"] : [State_DNScache(<'rab___3', param, %v_>, return_var_12, m_0_12, l_0_12, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2auth', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___3', %v_)]->[State_DNScache(<'rab___5', param, %v_>, 'rab_', m_0_12, <l_0_12, l_0_12>, 'rab_'), Store('rab_ch_cache2auth', <l_0_12, m_0_12>), Out(<l_0_12, m_0_12>)] 
 
-rule DNScache_merged___5_0_0___9_57[role="DNScache"] : [State_DNScache(<'rab___5_0_0', param, %v_>, return_var_17, 'rab_', <l_0_17, l_1_17, l_2_17, l_3_17>, 'rab_'), Store(l_0_17, n_0_17), !ACP_(<'rab_DNScache', param>, l_0_17, 'rab_recv')]--[Transition_(<'rab_DNScache', param>, 'rab___5_0_0', %v_), Cached(l_2_17, fst(n_0_17))]->[State_DNScache(<'rab___9', param, %v_>, 'rab_', 'rab_', <snd(n_0_17), fst(n_0_17), n_0_17, l_2_17, l_3_17>, 'rab_')] 
+rule DNScache_merged___5___6_1_0_72[role="DNScache"] : [State_DNScache(<'rab___5', param, %v_>, return_var_19, m_0_19, <l_0_19, l_1_19>, 'rab_')]--[Transition_(<'rab_DNScache', param>, 'rab___5', %v_)]->[State_DNScache(<'rab___6_1_0', param, %v_>, 'rab_', m_0_19, <'rab_ch_auth2cache', 'rab_', l_0_19, l_1_19>, 'rab_')] 
 
-rule DNScache_merged___5_1_0___9_53[role="DNScache"] : [State_DNScache(<'rab___5_1_0', param, %v_>, return_var_22, 'rab_', <l_0_22, l_1_22, l_2_22, l_3_22>, 'rab_'), Store(l_0_22, n_0_22), In(n_1_22), !ACP_(<'rab_DNScache', param>, l_0_22, 'rab_recv')]--[Transition_(<'rab_DNScache', param>, 'rab___5_1_0', %v_), Cached(l_2_22, fst(n_1_22))]->[State_DNScache(<'rab___9', param, %v_>, 'rab_', 'rab_', <snd(n_1_22), fst(n_1_22), n_1_22, l_2_22, l_3_22>, 'rab_')] 
+rule DNScache_merged___5___6_0_0_71[role="DNScache"] : [State_DNScache(<'rab___5', param, %v_>, return_var_19, m_0_19, <l_0_19, l_1_19>, 'rab_')]--[Transition_(<'rab_DNScache', param>, 'rab___5', %v_)]->[State_DNScache(<'rab___6_0_0', param, %v_>, 'rab_', m_0_19, <'rab_ch_auth2cache', 'rab_', l_0_19, l_1_19>, 'rab_')] 
 
-rule DNScache_merged___9___15_47[role="DNScache"] : [State_DNScache(<'rab___9', param, %v_>, return_var_29, 'rab_', <l_0_29, l_1_29, l_2_29, l_3_29, l_4_29>, 'rab_'), !Eq_(l_0_29, id_29), !Const_('rab_id', id_29), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2client', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___9', %v_)]->[State_DNScache(<'rab___15', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), Store('rab_ch_cache2client', <l_3_29, l_1_29>)] 
+rule DNScache_merged___6_1_0___10_70[role="DNScache"] : [State_DNScache(<'rab___6_1_0', param, %v_>, return_var_21, m_0_21, <l_0_21, l_1_21, l_2_21, l_3_21>, 'rab_'), !ACP_(<'rab_DNScache', param>, l_0_21, 'rab_recv'), In(n_1_21), Store(l_0_21, n_0_21)]--[Transition_(<'rab_DNScache', param>, 'rab___6_1_0', %v_), Cached(l_2_21, fst(n_1_21))]->[State_DNScache(<'rab___10', param, %v_>, 'rab_', m_0_21, <snd(n_1_21), fst(n_1_21), n_1_21, l_2_21, l_3_21>, 'rab_')] 
+
+rule DNScache_merged___6_0_0___10_66[role="DNScache"] : [State_DNScache(<'rab___6_0_0', param, %v_>, return_var_26, m_0_26, <l_0_26, l_1_26, l_2_26, l_3_26>, 'rab_'), !ACP_(<'rab_DNScache', param>, l_0_26, 'rab_recv'), Store(l_0_26, n_0_26)]--[Transition_(<'rab_DNScache', param>, 'rab___6_0_0', %v_), Cached(l_2_26, fst(n_0_26))]->[State_DNScache(<'rab___10', param, %v_>, 'rab_', m_0_26, <snd(n_0_26), fst(n_0_26), n_0_26, l_2_26, l_3_26>, 'rab_')] 
+
+rule DNScache_merged___10___17_60[role="DNScache"] : [State_DNScache(<'rab___10', param, %v_>, return_var_33, m_0_33, <l_0_33, l_1_33, l_2_33, l_3_33, l_4_33>, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2client', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___10', %v_), Eq_(l_0_33, m_0_33)]->[State_DNScache(<'rab___17', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), Store('rab_ch_cache2client', <l_3_33, l_1_33>)] 
+
+rule DNScache_merged___10___17_59[role="DNScache"] : [State_DNScache(<'rab___10', param, %v_>, return_var_33, m_0_33, <l_0_33, l_1_33, l_2_33, l_3_33, l_4_33>, 'rab_'), !ACP_(<'rab_DNScache', param>, 'rab_ch_cache2client', 'rab_send')]--[Transition_(<'rab_DNScache', param>, 'rab___10', %v_), Eq_(l_0_33, m_0_33)]->[State_DNScache(<'rab___17', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), Store('rab_ch_cache2client', <l_3_33, l_1_33>), Out(<l_3_33, l_1_33>)] 
 
 
 // Model:  DNSauth
 
 
 
-rule DNSauth_merged___1___10_0_0_76[role="DNSauth"] : [State_DNSauth(<'rab___1', param, %v_>, return_var_1, 'rab_', 'rab_', 'rab_'), Fr(n_0_5), !Eq_(n_0_4, n_0_13), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fopen'), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fopen'), File_DNSauth(param, loc_0, n_0_4)]--[Transition_(<'rab_DNSauth', param>, 'rab___1', %v_), Record(fst(n_0_13), snd(n_0_13))]->[State_DNSauth(<'rab___10_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2auth', 'rab_', snd(n_0_13), fst(n_0_13), n_0_13, n_0_5>, 'rab__data_record'), File_DNSauth(param, loc_0, n_0_4), Fd_DNSauth(param, n_0_5, n_0_13)] 
+rule DNSauth_merged___1___10_0_0_76[role="DNSauth"] : [State_DNSauth(<'rab___1', param, %v_>, return_var_1, 'rab_', 'rab_', 'rab_'), File_DNSauth(param, loc_0, n_0_4), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fopen'), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fopen'), Fr(n_0_5)]--[Transition_(<'rab_DNSauth', param>, 'rab___1', %v_), Record(fst(n_0_13), snd(n_0_13)), Eq_(n_0_4, n_0_13)]->[State_DNSauth(<'rab___10_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_cache2auth', 'rab_', snd(n_0_13), fst(n_0_13), n_0_13, n_0_5>, 'rab__data_record'), File_DNSauth(param, loc_0, n_0_4), Fd_DNSauth(param, n_0_5, n_0_13)] 
 
-rule DNSauth_merged___10_0_0___21_56[role="DNSauth"] : [State_DNSauth(<'rab___10_0_0', param, %v_>, return_var_22, 'rab_', <l_0_22, l_1_22, l_2_22, l_3_22, l_4_22, l_5_22>, t_0_22), Store(l_0_22, n_0_22), !ACP_(<'rab_DNSauth', param>, l_0_22, 'rab_recv'), !Eq_(fst(n_0_22), l_3_22), !ACP_(<'rab_DNSauth', param>, 'rab_ch_auth2cache', 'rab_send'), !Const_('rab_id', id_29)]--[Transition_(<'rab_DNSauth', param>, 'rab___10_0_0', %v_)]->[State_DNSauth(<'rab___21', param, %v_>, 'rab_', 'rab_', 'rab_', t_0_22), Store('rab_ch_auth2cache', <l_2_22, id_29>)] 
+rule DNSauth_merged___10_0_0___21_56[role="DNSauth"] : [State_DNSauth(<'rab___10_0_0', param, %v_>, return_var_22, 'rab_', <l_0_22, l_1_22, l_2_22, l_3_22, l_4_22, l_5_22>, t_0_22), !ACP_(<'rab_DNSauth', param>, 'rab_ch_auth2cache', 'rab_send'), !ACP_(<'rab_DNSauth', param>, l_0_22, 'rab_recv'), Store(l_0_22, n_0_22)]--[Transition_(<'rab_DNSauth', param>, 'rab___10_0_0', %v_), Eq_(fst(n_0_22), l_3_22)]->[State_DNSauth(<'rab___21', param, %v_>, 'rab_', 'rab_', 'rab_', t_0_22), Store('rab_ch_auth2cache', <l_2_22, snd(n_0_22)>)] 
 
 rule DNSauth_init_filesys___0___1_0[role="DNSauth"] : [State_DNSauth(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_DNSauth', param>, 'rab___0', %v_)]->[State_DNSauth(<'rab___1', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_'), File_DNSauth(param, 'rab__data_record', <'rab_example.com', 'rab_192.0.2.1'>), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fclose'), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fread'), !ACP_(<'rab_DNSauth', param>, 'rab__data_record', 'rab_fopen')] 
 
-
-// Model:  Eve
-
-
-
-rule Eve_merged___0___1_0_0_13[role="Eve"] : [State_Eve(<'rab___0', param, %v_>, return_var_0, 'rab_', 'rab_', 'rab_')]--[Transition_(<'rab_Eve', param>, 'rab___0', %v_)]->[State_Eve(<'rab___1_0_0', param, %v_>, 'rab_', 'rab_', <'rab_ch_client2cache', 'rab_'>, 'rab_')] 
-
-rule Eve_merged___1_0_0___4_12[role="Eve"] : [State_Eve(<'rab___1_0_0', param, %v_>, return_var_2, 'rab_', <l_0_2, l_1_2>, 'rab_'), Store(l_0_2, n_0_2), !ACP_(<'rab_Eve', param>, l_0_2, 'rab_recv')]--[Transition_(<'rab_Eve', param>, 'rab___1_0_0', %v_), EveGetQuery(n_0_2)]->[State_Eve(<'rab___4', param, %v_>, 'rab_', 'rab_', 'rab_', 'rab_')] 
-
 restriction Init_ : " All x #i #j . Init_(x) @ #i & Init_(x) @ #j ==> #i = #j "
-rule Equality_gen: [] --> [!Eq_(x,x)]
-rule NEquality_gen: [] --[NEq__(x,y)]-> [!NEq_(x,y)]
-restriction NEquality_rule: "All x #i. NEq__(x,x) @ #i ==> F"
+restriction Equality_rule: "All x y #i. Eq_(x,y) @ #i ==> x = y"
+restriction NEquality_rule: "All x #i. NEq_(x,x) @ #i ==> F"
 lemma AlwaysStarts_[reuse,use_induction]:
 
       "All x p #i. Loop_Back(x, p) @i ==> Ex #j. Loop_Start(x, p) @j & j < i"
@@ -139,7 +125,6 @@ lemma TransitionOnce_[reuse,use_induction]:
       "All x p %i #j #k . Transition_(x, p, %i) @#j &
         Transition_(x, p, %i) @ #k ==> #j = #k"
 
-lemma eve : exists-trace "Ex new_0 #time_1  #time_0 . ClientSendQuery(new_0)@#time_1 & EveGetQuery(new_0)@#time_0 "
 lemma z : all-traces "All new_0 new_1 #time_1 . ClientRecvResponse(new_1, new_0)@#time_1 ==> Ex  #time_2 . Record(new_1, new_0)@#time_2 & #time_2 < #time_1 "
 lemma y : all-traces "All new_0 new_1 #time_1 . ClientRecvResponse(new_1, new_0)@#time_1 ==> Ex  #time_2 . Cached(new_1, new_0)@#time_2 & #time_2 < #time_1 "
 lemma x : all-traces "All new_0 new_1 #time_1 . Cached(new_1, new_0)@#time_1 ==> Ex  #time_2 . Record(new_1, new_0)@#time_2 & #time_2 < #time_1 "
