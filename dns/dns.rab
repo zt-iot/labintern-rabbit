@@ -117,11 +117,11 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
         var response = recv(ch_auth_in) in
         var address = fst(response) in
         var response_id = snd(response) in
-        event [::Cached(domain, address)];
 
         (* クライアントに応答を返す *)
         case 
         | [response_id = id] ->
+          event [::Cached(domain, address)];
           _ := send(ch_client_out, (domain, address))
         end
     }
