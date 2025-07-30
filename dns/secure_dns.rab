@@ -88,15 +88,11 @@ allow attack dnscache [tamper_channel]
 
 (* 鍵の生成 *)
 (* DNSSEC用の権威サーバーの鍵 *)
-const fresh auth_pubk
+(* const fresh auth_pubk -- This should be pk(auth_privk) *)
 const fresh auth_privk
 
 (*TLSのための共有鍵*)
 const fresh tls_symk
-
-
-(*クライアントの通信を覗き見する第三者*)
-
 
 process Client(ch_cache_in: udp, ch_cache_out: udp) : client {
 
@@ -156,7 +152,7 @@ process DNScache(ch_client_in: udp, ch_client_out: udp, ch_auth_out: udp, ch_aut
         var sig_record = snd(response) in
 
         (* DNSSECでレコードを検証 *)
-        var res = verify(sig_record, address, auth_pubk) in
+        var res = verify(sig_record, address, pk(auth_privk)) in
 
         (* 検証が成功した場合、キャッシュに保存し、クライアントに返す *)
         case
